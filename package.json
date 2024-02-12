@@ -1,0 +1,22 @@
+{
+  "name": "localcsv",
+  "version": "0.0.1",
+  "description": "Localization CSV Converter CLI to handle special characters between multiple platforms",
+  "main": "bin/index.js",
+  "bin": {
+    "localcsv": "./bin/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cli"
+  ],
+  "author": "Francesco Biffi",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^12.0.0",
+    "csv-parser": "^3.0.0",
+    "debug": "^4.3.4"
+  }
+}
