@@ -6,7 +6,7 @@ const { parseCSV, writeCSV } = require('../lib/csvUtils');
 const debug = require('debug')('localcsv');
 
 program
-    .version('0.0.1')
+    .version('0.0.2')
     .description('Localization CLI to handle special characters between multiple platforms')
     
 program
