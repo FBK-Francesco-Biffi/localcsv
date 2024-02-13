@@ -16,7 +16,7 @@ program
     .argument('<file>', 'File to transform')
     .description('Transforms a Generic CSV file into an IOS CSV File')
     .option('-o, --output <output>', 'Specifies the path to the output CSV file', "transformed-ios.csv")
-    .option('-d, --debug [debug]', 'Abilita la modalità di debug')
+    .option('-d, --debug', 'Abilita la modalità di debug')
     .action((file, options) => {
         execute(file, options, csvToIOS)
     })
@@ -26,7 +26,7 @@ program
     .argument('<file>', 'File to transform')
     .description('Transforms a Generic CSV file into an Android CSV File')
     .option('-o, --output <output>', 'Specifies the path to the output CSV file', "transformed-android.csv")
-    .option('-d, --debug [debug]', 'Abilita la modalità di debug')
+    .option('-d, --debug', 'Abilita la modalità di debug')
     .action((file, options) => {
         execute(file, options, csvToAndroid)
     })
@@ -36,7 +36,7 @@ program
     .argument('<file>', 'File to transform')
     .description('Transforms an IOS CSV file into a Generic CSV File')
     .option('-o, --output <output>', 'Specifies the path to the output CSV file', "transformed-generic.csv")
-    .option('-d, --debug [debug]', 'Abilita la modalità di debug')
+    .option('-d, --debug', 'Abilita la modalità di debug')
     .action((file, options) => {
         execute(file, options, iosToCSV)
     })
@@ -46,7 +46,7 @@ program
     .argument('<file>', 'File to transform')
     .description('Transforms an Android CSV file into a Generic CSV File')
     .option('-o, --output <output>', 'Specifies the path to the output CSV file', "transformed-generic.csv")
-    .option('--debug', 'Abilita la modalità di debug')
+    .option('-d, --debug', 'Abilita la modalità di debug')
     .action((file, options) => {
         execute(file, options, androidToCSV)
     })
