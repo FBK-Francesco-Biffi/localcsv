@@ -1,8 +1,10 @@
 # localcsv
 Localization CSV Converter CLI to handle special characters between multiple platforms
 
-## Usage
+## Installation
+npm install -g path_to_this_CLI
 
+## Usage
 ### Commands
 csv2ios <file-path> - Transforms a Generic CSV file into an IOS CSV File
 csv2android <file-path> - Transforms a Generic CSV file into an Android CSV File

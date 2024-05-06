@@ -1,6 +1,6 @@
 {
   "name": "localcsv",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Localization CSV Converter CLI to handle special characters between multiple platforms",
   "main": "bin/index.js",
   "bin": {
@@ -15,8 +15,10 @@
   "author": "Francesco Biffi",
   "license": "ISC",
   "dependencies": {
+    "@json2csv/plainjs": "^7.0.6",
     "commander": "^12.0.0",
     "csv-parser": "^3.0.0",
-    "debug": "^4.3.4"
+    "debug": "^4.3.4",
+    "xml2js": "^0.6.2"
   }
 }

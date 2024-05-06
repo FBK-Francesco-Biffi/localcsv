@@ -3,12 +3,14 @@
 const { Command } = require('commander');
 const program = new Command();
 const { csvToIOS, csvToAndroid, iosToCSV, androidToCSV } = require('../lib/transformations');
-const { parseCSV, writeCSV } = require('../lib/csvUtils');
+const { parseCSV, writeCSV, writeRawCSV } = require('../lib/csvUtils');
+const { parseJSON } = require('../lib/JSONUtils');
+const { parseAndroidResources, mapToRawCSV } = require('../lib/parsers')
 const debug = require('debug')('localcsv');
 
 program
     .name('localcsv')
-    .version('0.0.2')
+    .version('0.0.3')
     .description('Localization CLI to handle special characters between multiple platforms')
     
 program
@@ -18,7 +20,7 @@ program
     .option('-o, --output <output>', 'Specifies the path to the output CSV file', "transformed-ios.csv")
     .option('-d, --debug', 'Abilita la modalità di debug')
     .action((file, options) => {
-        execute(file, options, csvToIOS)
+        transformCSV(file, options, csvToIOS)
     })
 
 program
@@ -28,7 +30,7 @@ program
     .option('-o, --output <output>', 'Specifies the path to the output CSV file', "transformed-android.csv")
     .option('-d, --debug', 'Abilita la modalità di debug')
     .action((file, options) => {
-        execute(file, options, csvToAndroid)
+        transformCSV(file, options, csvToAndroid)
     })
 
 program
@@ -38,7 +40,7 @@ program
     .option('-o, --output <output>', 'Specifies the path to the output CSV file', "transformed-generic.csv")
     .option('-d, --debug', 'Abilita la modalità di debug')
     .action((file, options) => {
-        execute(file, options, iosToCSV)
+        transformCSV(file, options, iosToCSV)
     })
 
 program
@@ -48,7 +50,16 @@ program
     .option('-o, --output <output>', 'Specifies the path to the output CSV file', "transformed-generic.csv")
     .option('-d, --debug', 'Abilita la modalità di debug')
     .action((file, options) => {
-        execute(file, options, androidToCSV)
+        transformCSV(file, options, androidToCSV)
+    })
+
+program
+    .command('parseAndroidRes')
+    .description('Parse Android Resource Files')
+    .option('-o, --output <output>', 'Specifies the path to the output file', "android-resources.csv")
+    .option('-d, --debug', 'Abilita la modalità di debug')
+    .action((options) => {
+        createResourceCSV(options)
     })
 
 program.parse(process.argv)
@@ -57,7 +68,7 @@ if (program.args.length === 0) {
     program.help();
 }
 
-function execute(file, options, transformer) {
+function transformCSV(file, options, transformer) {
     console.log(options)
     debug.enabled = options.debug || false
     parseCSV(file)
@@ -74,3 +85,54 @@ function execute(file, options, transformer) {
             console.error(`An error occurred while parsing the CSV file:`, error);
         });
 }
+
+function createResourceCSV(options) {
+    parseJSON('localcsv-config.json').then(config => {
+        console.log(options)
+        debug.enabled = options.debug || false
+        const translationFiles = config.translationFiles
+        const headers = config.headers ? config.headers : createDefaultHeaders(translationFiles)
+        const translationsMap = {};
+
+        return Promise.all(translationFiles.map(filePath => {
+            return parseAndroidResources(filePath)
+                .then(strings => {
+                    strings.forEach(string => {
+                        const name = string.$.name;
+                        const value = string._;
+                        translationsMap[name] = translationsMap[name] || {};
+                        const index = translationFiles.indexOf(filePath) + 1;
+                        const header = headers[index];
+                        translationsMap[name][header] = value;
+                    });
+                });
+        }))
+        .then(() => {
+            debug(translationsMap)
+            const rawCSV = mapToRawCSV(translationsMap, headers)
+            //debug(rawCSV)
+            writeRawCSV(rawCSV, options.output)
+        })
+        .then(() => {
+            console.log(`Parsed data written on: ${options.output}`);
+        })
+        .catch(err => {
+            console.error('Error:', err.message);
+        });
+    })
+    .catch(err => {
+        console.error('Error:', err.message);
+    });
+}
+
+function createDefaultHeaders(translationFiles) {
+    const headers = ["name"]
+    translationFiles.forEach(filePath => {
+        const index = translationFiles.indexOf(filePath) + 1
+        const header = `translation_${index}`
+        headers.push(header)
+    })
+    return headers
+}
+
+
