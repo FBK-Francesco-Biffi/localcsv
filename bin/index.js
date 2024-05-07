@@ -11,7 +11,7 @@ const debug = require('debug')('localcsv');
 
 program
     .name('localcsv')
-    .version('0.0.3')
+    .version('0.1.0')
     .description('Localization CLI to handle special characters between multiple platforms')
     
 program
