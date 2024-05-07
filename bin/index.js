@@ -5,8 +5,8 @@ const program = new Command();
 const { csvToIOS, csvToAndroid, iosToCSV, androidToCSV } = require('../lib/transformations');
 const { parseCSV, writeCSV, mapToRawCSV, writeRawCSV } = require('../lib/csvUtils');
 const { parseJSON } = require('../lib/JSONUtils');
-const { formatAndroidResources } = require('../lib/androidUtils')
-const { writeXML, parseXML } = require('../lib/XMLUtils')
+const { formatAndroidResources, buildAndroidResources } = require('../lib/androidUtils')
+const { writeXMLSync, parseXML } = require('../lib/XMLUtils')
 const debug = require('debug')('localcsv');
 
 program
@@ -143,7 +143,12 @@ async function createResourceXML(file, options) {
         const translationFiles = config.translationFiles
         const headers = config.headers ? config.headers : createDefaultHeaders(translationFiles)
         const csvData = await parseCSV(file);
-        writeXML(csvData, "generated", headers[0]);
+        const xmlBuilderMap = buildAndroidResources(csvData, headers[0])
+        Object.keys(xmlBuilderMap).forEach(key => {
+            const xmlBuilder = xmlBuilderMap[key]
+            const filePath = `generated_${key}`
+            writeXMLSync(xmlBuilder, filePath)
+        })
     } catch (error) {
         console.error('Si è verificato un errore durante la conversione:', error);
     }
