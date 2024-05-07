@@ -1,6 +1,6 @@
 {
   "name": "localcsv",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Localization CSV Converter CLI to handle special characters between multiple platforms",
   "main": "bin/index.js",
   "bin": {
