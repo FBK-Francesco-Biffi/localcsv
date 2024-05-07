@@ -3,10 +3,10 @@
 const { Command } = require('commander');
 const program = new Command();
 const { csvToIOS, csvToAndroid, iosToCSV, androidToCSV } = require('../lib/transformations');
-const { parseCSV, writeCSV, writeRawCSV } = require('../lib/csvUtils');
+const { parseCSV, writeCSV, mapToRawCSV, writeRawCSV } = require('../lib/csvUtils');
 const { parseJSON } = require('../lib/JSONUtils');
-const { parseAndroidResources, mapToRawCSV } = require('../lib/parsers')
-const { writeXML } = require('../lib/XMLUtils')
+const { formatAndroidResources } = require('../lib/androidUtils')
+const { writeXML, parseXML } = require('../lib/XMLUtils')
 const debug = require('debug')('localcsv');
 
 program
@@ -105,8 +105,9 @@ function createResourceCSV(options) {
         const translationsMap = {};
 
         return Promise.all(translationFiles.map(filePath => {
-            return parseAndroidResources(filePath)
-                .then(strings => {
+            return parseXML(filePath)
+                .then(data => {
+                    const strings = formatAndroidResources(data)
                     strings.forEach(string => {
                         const name = string.$.name;
                         const value = string._;
