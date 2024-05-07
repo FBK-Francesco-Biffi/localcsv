@@ -6,6 +6,7 @@ const { csvToIOS, csvToAndroid, iosToCSV, androidToCSV } = require('../lib/trans
 const { parseCSV, writeCSV, writeRawCSV } = require('../lib/csvUtils');
 const { parseJSON } = require('../lib/JSONUtils');
 const { parseAndroidResources, mapToRawCSV } = require('../lib/parsers')
+const { writeXML } = require('../lib/XMLUtils')
 const debug = require('debug')('localcsv');
 
 program
@@ -60,6 +61,15 @@ program
     .option('-d, --debug', 'Abilita la modalità di debug')
     .action((options) => {
         createResourceCSV(options)
+    })
+
+program
+    .command('csv2AndroidRes')
+    .argument('<file>', 'File to transform')
+    .description('Convert CSV file to Android Resources')
+    .option('-d, --debug', 'Abilita la modalità di debug')
+    .action((file, options) => {
+        createResourceXML(file, options)
     })
 
 program.parse(process.argv)
@@ -123,6 +133,19 @@ function createResourceCSV(options) {
     .catch(err => {
         console.error('Error:', err.message);
     });
+}
+
+async function createResourceXML(file, options) {
+    console.log(options)
+    try {
+        const config = await parseJSON('localcsv-config.json')
+        const translationFiles = config.translationFiles
+        const headers = config.headers ? config.headers : createDefaultHeaders(translationFiles)
+        const csvData = await parseCSV(file);
+        writeXML(csvData, "generated", headers[0]);
+    } catch (error) {
+        console.error('Si è verificato un errore durante la conversione:', error);
+    }
 }
 
 function createDefaultHeaders(translationFiles) {
