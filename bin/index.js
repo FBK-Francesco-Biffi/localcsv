@@ -20,6 +20,8 @@ program
     .description('Transforms a Generic CSV file into an IOS CSV File')
     .option('-o, --output <output>', 'Specifies the path to the output CSV file', "transformed-ios.csv")
     .option('-d, --debug', 'Abilita la modalità di debug')
+    .option('-s, --separator <separator>', 'Carattere di separazione del File CSV', ",")
+    .option('-e, --encoding <encoding>', 'Standard di Encoding', "utf-8")
     .action((file, options) => {
         transformCSV(file, options, csvToIOS)
     })
@@ -30,6 +32,8 @@ program
     .description('Transforms a Generic CSV file into an Android CSV File')
     .option('-o, --output <output>', 'Specifies the path to the output CSV file', "transformed-android.csv")
     .option('-d, --debug', 'Abilita la modalità di debug')
+    .option('-s, --separator <separator>', 'Carattere di separazione del File CSV', ",")
+    .option('-e, --encoding <encoding>', 'Standard di Encoding', "utf-8")
     .action((file, options) => {
         transformCSV(file, options, csvToAndroid)
     })
@@ -40,6 +44,8 @@ program
     .description('Transforms an IOS CSV file into a Generic CSV File')
     .option('-o, --output <output>', 'Specifies the path to the output CSV file', "transformed-generic.csv")
     .option('-d, --debug', 'Abilita la modalità di debug')
+    .option('-s, --separator <separator>', 'Carattere di separazione del File CSV', ",")
+    .option('-e, --encoding <encoding>', 'Standard di Encoding', "utf-8")
     .action((file, options) => {
         transformCSV(file, options, iosToCSV)
     })
@@ -50,6 +56,8 @@ program
     .description('Transforms an Android CSV file into a Generic CSV File')
     .option('-o, --output <output>', 'Specifies the path to the output CSV file', "transformed-generic.csv")
     .option('-d, --debug', 'Abilita la modalità di debug')
+    .option('-s, --separator <separator>', 'Carattere di separazione del File CSV', ",")
+    .option('-e, --encoding <encoding>', 'Standard di Encoding', "utf-8")
     .action((file, options) => {
         transformCSV(file, options, androidToCSV)
     })
@@ -86,7 +94,7 @@ function transformCSV(file, options, transformer) {
             debug(data)
             const transformedData = transformer(data)
             debug(transformedData)
-            return writeCSV(transformedData, options.output);
+            return writeCSV(transformedData, options.output, options.separator, options.encoding);
         })
         .then(() => {
             console.log(`Modified data written on: ${options.output}`);
